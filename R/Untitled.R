@@ -34,6 +34,7 @@ require("FDb.InfiniumMethylation.hg19",quietly = TRUE)
 require("GEOquery",quietly = TRUE)
 require("rtracklayer",quietly = TRUE)
 require("BiocGenerics",quietly = TRUE)
+#library("MethylChiPAnno", quietly=TRUE, warn.conflicts=FALSE,verbose = FALSE)
 
 # define parameters
 clusterSize=2
@@ -42,15 +43,13 @@ platform_id='HM450'
 genome_id='hg19'
 
 # cmd arguments
-args <- commandArgs(trailingOnly = TRUE)
-methyl_file = args[1]
-ChiPseq_file =args[2]
-output_file = args[3]
-fig1 = args[4]
-fig2 = args[5]
+#args <- commandArgs(trailingOnly = TRUE)
+#methyl_file = args[1]
+#ChiPseq_file =args[2]
+#output_file = args[3]
 
-#methyl_file <- ("test-data/input.csv")
-#ChiPseq_file <- ("test-data/Galaxy3.bed")
+methyl_file <- ("test-data/input.csv")
+ChiPseq_file <- ("test-data/Galaxy3.bed")
 
 options(warn=-1)
 
@@ -99,19 +98,21 @@ if(length(unique(id_ref)) != 1) {
                   end=MAT$end),
                   value_pos=MAT$value)
 
+  #finding/counting overlaps
+  #peaks<-findOverlaps(METH,ChiPseq,maxgap=5000)
 
   anno <- annotatePeak(METH)
   peakAnno_genes <- as.data.frame(anno)
   output_file <- write.table(peakAnno_genes,file="test-data/output_file.csv",sep="\t",row.names=FALSE)
 
-  #jpeg(file = "test-data/fig1.jpg", width=400,height=350)
-  fig1 <- plotAnnoBar(anno)
+  jpeg("test-data/fig1.jpg")
+  plotAnnoBar(anno)
   dev.off()
 
-  #jpeg(file = "test-data/fig2.jpg", width=1000,height=350)
-  fig2 <- upsetplot(anno, vennpie=TRUE)
+  jpeg("test-data/fig2.jpg")
+  upsetplot(anno, vennpie=TRUE)
   dev.off()
 
-
-
+  # save result, which contains overlaps between Methyl and ChiPseq data
+  #p <- as.data.frame(ChiPseq[subjectHits(peaks),])
 
