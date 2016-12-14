@@ -24,8 +24,8 @@
 ##' @exportMethods show, initialize, getBeta, getM, getCN, getMeth, getUnmeth, getManifest, annotation, preprocessMethod, combine, sampleNames, featureNames, pData, mapToGenome, ratioConvert, bumphunter
 
 # Import required libraries
+require("BiocGenerics",quietly = TRUE)
 require("data.table",quietly = TRUE)
-require("lapply",quietly = TRUE)
 require("minfi",quietly = TRUE)
 require("ChIPseeker",quietly = TRUE)
 require("ChIPpeakAnno",quietly = TRUE)
@@ -33,7 +33,7 @@ require("TxDb.Hsapiens.UCSC.hg19.knownGene",quietly = TRUE)
 require("FDb.InfiniumMethylation.hg19",quietly = TRUE)
 require("GEOquery",quietly = TRUE)
 require("rtracklayer",quietly = TRUE)
-require("BiocGenerics",quietly = TRUE)
+
 
 # define parameters
 clusterSize=2
@@ -42,15 +42,15 @@ platform_id='HM450'
 genome_id='hg19'
 
 # cmd arguments
-#args <- commandArgs(trailingOnly = TRUE)
-#methyl_file = args[1]
-#ChiPseq_file =args[2]
-#output_file = args[3]
-#fig1 = args[4]
-#fig2 = args[5]
+args <- commandArgs(trailingOnly = TRUE)
+methyl_file = args[1]
+ChiPseq_file =args[2]
+output_file = args[3]
+fig = args[4]
 
-methyl_file <- ("test-data/input.csv")
-ChiPseq_file <- ("test-data/Galaxy3.bed")
+
+#methyl_file <- ("test-data/input.csv")
+#ChiPseq_file <- ("test-data/Galaxy3.bed")
 
 options(warn=-1)
 
@@ -102,9 +102,9 @@ if(length(unique(id_ref)) != 1) {
 
   anno <- annotatePeak(METH)
   peakAnno_genes <- as.data.frame(anno)
-  output_file <- write.table(peakAnno_genes,file="test-data/output_file.csv",sep="\t",row.names=FALSE)
+  write.csv(peakAnno_genes,  output_file, row.names=FALSE)
 
-  pdf(file = "test-data/fig.pdf", width=1200,height=600)
+  pdf(file = fig, width=1200,height=600)
   upsetplot(anno, vennpie=TRUE)
   dev.off()
 }
