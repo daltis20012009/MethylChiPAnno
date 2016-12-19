@@ -33,7 +33,9 @@ require("TxDb.Hsapiens.UCSC.hg19.knownGene",quietly = TRUE)
 require("FDb.InfiniumMethylation.hg19",quietly = TRUE)
 require("GEOquery",quietly = TRUE)
 require("rtracklayer",quietly = TRUE)
+require("GenomicRanges",quietly = TRUE)
 
+?data.table
 
 # define parameters
 clusterSize=2
@@ -49,20 +51,19 @@ output_file = args[3]
 fig = args[4]
 
 
-#methyl_file <- ("test-data/input.csv")
-#ChiPseq_file <- ("test-data/Galaxy3.bed")
-
+methyl_file <- ("test-data/input.csv")
+ChiPseq_file <- ("test-data/Galaxy3.bed")
 options(warn=-1)
+options(download.file.method.GEOquery='curl')
 
-# read uploaded data
-TAB=read.csv(methyl_file)
-ChiPseq=read.delim(ChiPseq_file)
+
+
+TAB=fread(methyl_file)
+ChiPseq= fread(ChiPseq_file,select=1:3)
 
 # preprocess data to pass into bumphunter function
-ChiPseq <- GRanges(seqnames= ChiPseq[,1],
-                   ranges=IRanges
-                   (start=ChiPseq[,2],
-                   end= ChiPseq[,3]))
+ChiPseq <- GRanges(seqnames= ChiPseq$V1,ranges=IRanges
+                   (start=ChiPseq$V2,end= ChiPseq$V3))
 if(is.null(TAB)){
   stop("Must specify input files")
 }else{
